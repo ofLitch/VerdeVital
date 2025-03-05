@@ -3,6 +3,9 @@
 ## Descripción del Proyecto
 Este proyecto implementa un sistema de monitoreo ambiental y de luz para el invernadero **VerdeVital**, utilizando una **ESP32** y sensores de temperatura, humedad y luz. Además, el sistema cuenta con una máquina de estados para gestionar los diferentes estados del invernadero y un sistema de alarma basado en un LED intermitente.
 
+## Pruebas (Fotos)
+Se encuentran dentro de la carpeta "/img/firts/"
+
 ## Entorno de Desarrollo
 - **Plataforma utilizada:** Visual Studio Code con PlatformIO.
 - **Microcontrolador:** ESP32.
@@ -76,4 +79,7 @@ Este proyecto es parte del desarrollo del invernadero VerdeVital. Se aceptan mej
 ---
 
 *Autor: Equipo de Desarrollo VerdeVital*
+Valentina Muñoz Arcos
+Luis Miguel Gomez Muñoz
+David Alejandro Ortega Flórez
 

@@ -7,7 +7,7 @@
 #define DHT_TYPE DHT11
 
 #if CONFIG_FREERTOS_UNICORE
-    static const BaseType_t app_cpu = 0;
+static const BaseType_t app_cpu = 0;
 #else
     static const BaseType_t app_cpu = 1;
 #endif
@@ -33,9 +33,13 @@ void taskToggleLED(void *pvParameters) {
 void taskTemperature(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
-    DHT* dht = (DHT *)params[1];
+    //DHT* dht = (DHT *)params[1];
+    DHT dht(DHT_PIN, DHT_TYPE);
     while (true) {
-        data->temperature = dht->readTemperature();
+        data->temperature = dht.readTemperature();
+        Serial.print("Temperatura: ");
+        Serial.println(data->temperature);
+        data->temperature = dht.readHumidity();
         Serial.print("Temperatura: ");
         Serial.println(data->temperature);
         vTaskDelay(pdMS_TO_TICKS(2000));
@@ -59,7 +63,7 @@ void setup() {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
 
-    static DHT dht(DHT_PIN, DHT_TYPE);
+    DHT dht(DHT_PIN, DHT_TYPE);
     dht.begin();
 
     // Estructura  de datos
@@ -70,9 +74,9 @@ void setup() {
     void *paramsHumidity[2] = {&data, &dht};
 
     // Tareas
-    xTaskCreate(taskToggleLED, "Toggle LED", 1024, NULL, 1, NULL);
+    //xTaskCreate(taskToggleLED, "Toggle LED", 1024, NULL, 1, NULL);
     xTaskCreate(taskTemperature, "Temperature Function", 2048, paramsTemperature, 1, NULL);
-    xTaskCreate(taskHumidity, "Humidity Function", 2048, paramsHumidity, 2, NULL);
+    //xTaskCreate(taskHumidity, "Humidity Function", 2048, paramsHumidity, 1, NULL);
 }
 
 void loop() {}

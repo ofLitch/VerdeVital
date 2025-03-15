@@ -17,8 +17,8 @@
 // Estructura para almacenar datos de sensores
 struct SensorData {
     float temperature;
-    float humidity;
-    int light;
+    unsigned short int humidity;
+    unsigned short int light;
 };
 
 // 🔹 Tarea para alternar el estado del LED cada 4 segundos
@@ -38,19 +38,22 @@ void taskDHT(void *pvParameters) {
     SensorData *data = (SensorData *)params[0];
     DHT* dht = (DHT *)params[1];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[2];
+    float temperature = 0.0f;
+    unsigned short int humidity = 0;
 
     while (true) {
-        float temperature = dht->readTemperature();
-        float humidity = dht->readHumidity();
-
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+            temperature = dht->readTemperature();
+            humidity = dht->readHumidity();
+
             if (!isnan(temperature) && !isnan(humidity)) {
                 data->temperature = temperature;
                 data->humidity = humidity;
             } else {
                 data->temperature = -1.0f;
-                data->humidity = -1.0f;
+                data->humidity = 0;
             }
+
             xSemaphoreGive(mutex);
         }
         vTaskDelay(pdMS_TO_TICKS(2000));
@@ -63,14 +66,13 @@ void taskLight(void *pvParameters) {
     SensorData *data = (SensorData *)params[0];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[1];
 
-    pinMode(LDR_PIN, INPUT); // Configurar el pin como entrada
-    int light = 0;
+    pinMode(LDR_PIN, INPUT);
+    unsigned short int light = 0;
 
     while (true) {
-        light = analogRead(LDR_PIN); // Leer primero
-        Serial.printf("LDR leído: %d\n", light);
-
+        
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+            light = analogRead(LDR_PIN); 
             data->light = light;
             xSemaphoreGive(mutex);
         }
@@ -87,8 +89,8 @@ void taskPrintData(void *pvParameters) {
 
     while (true) {
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-            Serial.printf("------------\nTemperatura: %.2f\nHumedad: %.2f\nLuz: %d\n------------\n",
-                          data->temperature, data->humidity, data->light);
+            Serial.printf   ("------------\nTemperatura: %.2f\nHumedad: %d\nLuz: %d\n------------\n",
+                            data->temperature, data->humidity, data->light);
             xSemaphoreGive(mutex);
         }
         vTaskDelay(pdMS_TO_TICKS(2000));
@@ -105,7 +107,7 @@ void setup() {
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
 
     // **¡IMPORTANTE!** Declaramos `data` como `static` para que no sea destruida al salir de `setup()`
-    static SensorData data = {0.0f, 0.0f, 0};
+    static SensorData data = {0.0f, 0, 0};
 
     // Parámetros para las tareas
     void *paramsDHT[3] = {&data, &dht, mutex};
@@ -115,7 +117,7 @@ void setup() {
     xTaskCreate(taskToggleLED, "Toggle LED", 2048, NULL, 3, NULL);
     xTaskCreate(taskDHT, "DHT Function", 2048, paramsDHT, 2, NULL);
     xTaskCreate(taskLight, "Light Function", 2048, paramData, 2, NULL);
-    xTaskCreate(taskPrintData, "Print Data", 3072, paramData, 1, NULL);
+    xTaskCreate(taskPrintData, "Print Data", 2048, paramData, 1, NULL);
 }
 
 void loop() {}

@@ -23,12 +23,18 @@ struct SensorData {
 
 // 🔹 Tarea para alternar el estado del LED cada 4 segundos
 void taskToggleLED(void *pvParameters) {
+    void **params = (void **)pvParameters;
+    SensorData *data = (SensorData *)params[0];
+    SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[1];
     pinMode(LED_PIN, OUTPUT);
     while (true) {
-        digitalWrite(LED_PIN, LOW);
-        vTaskDelay(pdMS_TO_TICKS(4000));
-        digitalWrite(LED_PIN, HIGH);
-        vTaskDelay(pdMS_TO_TICKS(4000));
+        if (xSemaphoreTake(mutex, portMAX_DELAY)){
+            if ( (data->temperature > 24 and data->humidity > 80) or (data->light > 500) ){
+                digitalWrite( LED_PIN, !digitalRead ( LED_PIN ) );
+            } else digitalWrite( LED_PIN, LOW );
+            xSemaphoreGive(mutex);
+            vTaskDelay(pdMS_TO_TICKS(2000));
+        }
     }
 }
 
@@ -114,7 +120,7 @@ void setup() {
     void *paramData[2] = {&data, mutex};
 
     // Creación de tareas con prioridades adecuadas
-    xTaskCreate(taskToggleLED, "Toggle LED", 2048, NULL, 3, NULL);
+    xTaskCreate(taskToggleLED, "Toggle LED", 2048, paramData, 3, NULL);
     xTaskCreate(taskDHT, "DHT Function", 2048, paramsDHT, 2, NULL);
     xTaskCreate(taskLight, "Light Function", 2048, paramData, 2, NULL);
     xTaskCreate(taskPrintData, "Print Data", 2048, paramData, 1, NULL);

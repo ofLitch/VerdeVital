@@ -22,8 +22,8 @@ struct SensorData {
     unsigned short int light;
 };
 
-void IRAM_ATTR button_ISR(){
-
+void IRAM_ATTR btn_ISR(){
+    
 }
 
 
@@ -135,19 +135,32 @@ void setup() {
     pinMode(BTN_PIN, INPUT_PULLDOWN);
     pinMode(LED_PIN, OUTPUT);
     pinMode(LDR_PIN, INPUT);
-    
-    // Interrupciones
-    attachInterrupt(BTN_PIN, button_ISR, CHANGE);
 
+    
     // DHT
     static DHT dht(DHT_PIN, DHT_TYPE);
     dht.begin();
-
+    
     // Crear el mutex
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-
+    
     // **¡IMPORTANTE!** Declaramos `data` como `static` para que no sea destruida al salir de `setup()`
     static SensorData data = {0.0f, 0, 0};
+
+    // Declarar variables locales en el setup
+    static unsigned int counter = 0;          // Contador local
+    static unsigned long lastDebounceTime = 0; // Último tiempo de pulsación para debounce
+
+    // Lambda para gestionar el botón (interrupción)
+    attachInterrupt(BTN_PIN, [&counter, &lastDebounceTime]() {
+        unsigned long currentTime = millis(); // Leer el tiempo actual
+        if (currentTime - lastDebounceTime > 200) { // Verificar el debounce (50 ms)
+            counter++; // Incrementar el contador
+            lastDebounceTime = currentTime; // Actualizar el tiempo de pulsación
+            Serial.print("Counter actualizado: ");
+            Serial.println(counter); // Mostrar el contador
+        }
+    }, RISING);
 
     // Parámetros para las tareas
     void *paramsDHT[3] = {&data, &dht, mutex};

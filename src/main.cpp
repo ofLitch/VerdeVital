@@ -1,99 +1,127 @@
+/**
+ * @file main.cpp
+ * @brief Sistema embebido para el monitoreo y control ambiental en un invernadero de cannabis medicinal.
+ * 
+ * @details Este programa gestiona un invernadero mediante sensores y actuadores que optimizan las condiciones
+ *          de cultivo. Incluye captura de datos de temperatura, humedad relativa y luz ambiental, control de 
+ *          un LED RGB, y monitoreo remoto mediante puerto serie.
+ * 
+ * @authors
+ *          Valentina Muñoz Arcos
+ *          Luis Miguel Gómez Muñoz
+ *          David Alejandro Ortega Flórez
+ * 
+ * @version 1.2
+ * @date 2025-03-26
+ */
+
+// Librerias
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include <freertos/task.h>
 #include <DHT.h>
 
-#define LED_PIN 5
-#define LDR_PIN 2
-#define DHT_PIN 4
-#define BTN_PIN 15
-#define DHT_TYPE DHT11
+// Directivas
+#define LED_PIN 5       ///< Pin para el LED
+#define LDR_PIN 2       ///< Pin para el sensor LDR
+#define DHT_PIN 4       ///< Pin para el sensor DHT
+#define BTN_PIN 15      ///< Pin para el botón
+#define DHT_TYPE DHT11  ///< Tipo de sensor DHT usado
 
 #if CONFIG_FREERTOS_UNICORE
-    static const BaseType_t app_cpu = 0;
+    static const BaseType_t app_cpu = 0; ///< Configuración para sistemas de un núcleo
 #else
-    static const BaseType_t app_cpu = 1;
+    static const BaseType_t app_cpu = 1; ///< Configuración para sistemas de múltiples núcleos
 #endif
 
-// Estructura para almacenar datos de sensores
+/**
+  * @struct SensorData
+  * @brief Estructura para almacenar datos de sensores.
+  */
 struct SensorData {
-    float temperature;
-    unsigned short int humidity;
-    unsigned short int light;
+    float temperature;        ///< Temperatura medida por el sensor DHT
+    unsigned short humidity;  ///< Humedad medida por el sensor DHT
+    unsigned short light;     ///< Nivel de luz medido por el sensor LDR
 };
 
-void IRAM_ATTR btn_ISR(){
-    
-}
-
-
-// Tarea para alternar el estado del LED cada 4 segundos
+/**
+  * @brief Tarea para alternar el estado del LED.
+  * 
+  * @param pvParameters Parámetros de la tarea: datos compartidos y mutex.
+  */
 void taskToggleLED(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[1];
-    
+
     while (true) {
-        if (xSemaphoreTake(mutex, portMAX_DELAY)){
-            if ( (data->temperature > 24 and data->humidity > 80) or (data->light > 500) ){
-                digitalWrite( LED_PIN, !digitalRead ( LED_PIN ) );
-            } else digitalWrite( LED_PIN, LOW );
+        if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+            if ((data->temperature > 24 && data->humidity > 80) || (data->light > 500)) 
+                digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+            else 
+                digitalWrite(LED_PIN, LOW);
+            
             xSemaphoreGive(mutex);
-            vTaskDelay(pdMS_TO_TICKS(2000));
         }
+        vTaskDelay(pdMS_TO_TICKS(2100));  // Ajuste de prioridad: Tarea más espaciada en tiempo
     }
 }
 
-// Tarea para leer temperatura y humedad del sensor DHT11
+/**
+  * @brief Tarea para leer la temperatura del sensor DHT.
+  * 
+  * @param pvParameters Parámetros de la tarea: datos compartidos, sensor y mutex.
+ */
 void taskTemperature(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
-    DHT* dht = (DHT *)params[1];
+    DHT *dht = (DHT *)params[1];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[2];
-    float temperature = 0.0f;
 
     while (true) {
-        if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-            temperature = dht->readTemperature();
-            
-            if (!isnan(temperature)) {
+        float temperature = dht->readTemperature();
+        if (!isnan(temperature)) {
+            if (xSemaphoreTake(mutex, portMAX_DELAY)) {
                 data->temperature = temperature;
-            } else {
-                // Usar el promedio de 3 temperaturas anteriores
-                data->temperature = -1.0f;
+                xSemaphoreGive(mutex);
             }
-
-            xSemaphoreGive(mutex);
-        }
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        } else Serial.println("Error leyendo temperatura. Usando valor anterior.");
+        
+        vTaskDelay(pdMS_TO_TICKS(2200));  // Ajuste de prioridad para frecuencia de lectura
     }
 }
 
-void taskHumidity(void *pvParameters){
+/**
+  * @brief Tarea para leer la humedad del sensor DHT.
+  * 
+  * @param pvParameters Parámetros de la tarea: datos compartidos, sensor y mutex.
+ */
+void taskHumidity(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
-    DHT* dht = (DHT *)params[1];
+    DHT *dht = (DHT *)params[1];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[2];
-    unsigned short int humidity = 0;
 
     while (true) {
-        if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-            humidity = dht->readHumidity();
-            // Dividir en dos tareas
-            if (!isnan(humidity)) {
-                data->humidity = humidity;
-            } else {
-                // Usar el promedio de 3 temperaturas anteriores
-                data->humidity = 0;
+        float humidity = dht->readHumidity();
+        if (!isnan(humidity)) {
+            if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+                data->humidity = (unsigned short)humidity;
+                xSemaphoreGive(mutex);
             }
-
-            xSemaphoreGive(mutex);
-        }
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        } else Serial.println("Error leyendo humedad. Usando valor anterior");
+        
+         vTaskDelay(pdMS_TO_TICKS(2300));  // Ajuste de prioridad para frecuencia de lectura
     }
 }
 
-// Tarea para leer el sensor LDR y almacenar el valor en la estructura compartida
+
+
+/**
+ * @brief Tarea para leer el nivel de luz del sensor LDR.
+ * 
+ * @param pvParameters Puntero a los parámetros de la tarea. Incluye datos compartidos y mutex.
+ */
 void taskLight(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
@@ -109,33 +137,42 @@ void taskLight(void *pvParameters) {
             xSemaphoreGive(mutex);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(2400));
     }
 }
 
-// Tarea para imprimir los datos de los sensores en el puerto serie
-void taskPrintData(void *pvParameters) {
+/**
+  * @brief Tarea para imprimir los datos de los sensores.
+  * 
+  * @param pvParameters Parámetros de la tarea: datos compartidos y mutex.
+  */
+ void taskPrintData(void *pvParameters) {
     void **params = (void **)pvParameters;
     SensorData *data = (SensorData *)params[0];
     SemaphoreHandle_t mutex = (SemaphoreHandle_t)params[1];
 
     while (true) {
+        char buffer[128]; // Arreglo para manejar cadenas optimizado
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-            // Cambiar por un arreglo
-            Serial.printf   ("------------\nTemperatura: %.2f\nHumedad: %d\nLuz: %d\n------------\n",
-                            data->temperature, data->humidity, data->light);
+            snprintf(buffer, sizeof(buffer), 
+                        "------------\nTemperatura: %.2f\nHumedad: %d\nLuz: %d\n------------\n",
+                        data->temperature, data->humidity, data->light);
+            Serial.println(buffer);
             xSemaphoreGive(mutex);
         }
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(2500));  // Ajuste de prioridad para mantener eficiencia
     }
 }
 
+/**
+ * @brief Configuración inicial del sistema para usar FreeRTOS.
+ */
 void setup() {
+    // Inicializar y asignación de valores
     Serial.begin(115200);
     pinMode(BTN_PIN, INPUT_PULLDOWN);
     pinMode(LED_PIN, OUTPUT);
     pinMode(LDR_PIN, INPUT);
-
     
     // DHT
     static DHT dht(DHT_PIN, DHT_TYPE);
@@ -144,7 +181,7 @@ void setup() {
     // Crear el mutex
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     
-    // **¡IMPORTANTE!** Declaramos `data` como `static` para que no sea destruida al salir de `setup()`
+    // Declaramos `data` como `static` para que no sea destruida al salir de `setup()`
     static SensorData data = {0.0f, 0, 0};
 
     // Declarar variables locales en el setup
@@ -153,12 +190,12 @@ void setup() {
 
     // Lambda para gestionar el botón (interrupción)
     attachInterrupt(BTN_PIN, [&counter, &lastDebounceTime]() {
-        unsigned long currentTime = millis(); // Leer el tiempo actual
-        if (currentTime - lastDebounceTime > 200) { // Verificar el debounce (50 ms)
-            counter++; // Incrementar el contador
-            lastDebounceTime = currentTime; // Actualizar el tiempo de pulsación
+        unsigned long currentTime = millis();
+        if (currentTime - lastDebounceTime > 200) {
+            counter++;
+            lastDebounceTime = currentTime;
             Serial.print("Counter actualizado: ");
-            Serial.println(counter); // Mostrar el contador
+            Serial.println(counter);
         }
     }, RISING);
 
@@ -174,4 +211,9 @@ void setup() {
     xTaskCreate(taskPrintData, "Print Data", 2048, paramData, 1, NULL);
 }
 
+/**
+ * @brief Bucle principal del programa.
+ * 
+ * @details Este bucle permanece vacío porque todas las operaciones son manejadas por las tareas de FreeRTOS.
+ */
 void loop() {}

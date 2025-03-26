@@ -109,7 +109,7 @@ $(function(){initNavTree('struct_sensor_data.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 
-<p>Estructura para almacenar datos de sensores.  
+<p>Estructura para almacenar datos de los sensores ambientales.  
  <a href="#details">Más...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -126,9 +126,14 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>humidity</b
 unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>light</b></td></tr>
 <tr class="memdesc:a4b6371d2037ac55cbb9dfd3d91672209"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nivel de luz medido por el sensor LDR. <br /></td></tr>
 <tr class="separator:a4b6371d2037ac55cbb9dfd3d91672209"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac546fa97a045738d724e4e21c7aa06e6" id="r_ac546fa97a045738d724e4e21c7aa06e6"><td class="memItemLeft" align="right" valign="top"><a id="ac546fa97a045738d724e4e21c7aa06e6" name="ac546fa97a045738d724e4e21c7aa06e6"></a>
+RtcDateTime&#160;</td><td class="memItemRight" valign="bottom"><b>dateTime</b></td></tr>
+<tr class="memdesc:ac546fa97a045738d724e4e21c7aa06e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hora leída por el DS1302. <br /></td></tr>
+<tr class="separator:ac546fa97a045738d724e4e21c7aa06e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Descripción detallada</h2>
-<div class="textblock"><p>Estructura para almacenar datos de sensores. </p>
+<div class="textblock"><p>Estructura para almacenar datos de los sensores ambientales. </p>
+<p>Esta estructura contiene los valores medidos de temperatura, humedad, luz y la fecha/hora actual. </p>
 </div><hr/>La documentación de esta estructura está generada del siguiente archivo:<ul>
 <li>src/<a class="el" href="main_8cpp.html">main.cpp</a></li>
 </ul>

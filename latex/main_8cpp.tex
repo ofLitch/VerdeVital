@@ -9,17 +9,22 @@ Sistema embebido para el monitoreo y control ambiental en un invernadero de cann
 {\ttfamily \#include $<$freertos/semphr.\+h$>$}\newline
 {\ttfamily \#include $<$freertos/task.\+h$>$}\newline
 {\ttfamily \#include $<$DHT.\+h$>$}\newline
+{\ttfamily \#include $<$Three\+Wire.\+h$>$}\newline
+{\ttfamily \#include $<$Rtc\+DS1302.\+h$>$}\newline
 \doxysubsubsection*{Clases}
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{struct_sensor_data}{Sensor\+Data}}
-\begin{DoxyCompactList}\small\item\em Estructura para almacenar datos de sensores. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Estructura para almacenar datos de los sensores ambientales. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{defines}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{main_8cpp_ab4553be4db9860d940f81d7447173b2f}\label{main_8cpp_ab4553be4db9860d940f81d7447173b2f} 
 \#define {\bfseries LED\+\_\+\+PIN}~5
 \begin{DoxyCompactList}\small\item\em Pin para el LED. \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_ab61d0981ed42df9e18211b273d22cfcd}\label{main_8cpp_ab61d0981ed42df9e18211b273d22cfcd} 
+\#define {\bfseries BUZZER\+\_\+\+PIN}~25
+\begin{DoxyCompactList}\small\item\em Pin para el buzzer. \end{DoxyCompactList}\item 
 \Hypertarget{main_8cpp_a51fd859df7f54aaa2ef64c36c97b548a}\label{main_8cpp_a51fd859df7f54aaa2ef64c36c97b548a} 
 \#define {\bfseries LDR\+\_\+\+PIN}~2
 \begin{DoxyCompactList}\small\item\em Pin para el sensor LDR. \end{DoxyCompactList}\item 
@@ -29,25 +34,48 @@ struct \mbox{\hyperlink{struct_sensor_data}{Sensor\+Data}}
 \Hypertarget{main_8cpp_a6d68c581d3bc6b5b42af0365209f4960}\label{main_8cpp_a6d68c581d3bc6b5b42af0365209f4960} 
 \#define {\bfseries BTN\+\_\+\+PIN}~15
 \begin{DoxyCompactList}\small\item\em Pin para el botón. \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_aea87b10d3230b9148564707d34b26756}\label{main_8cpp_aea87b10d3230b9148564707d34b26756} 
+\#define {\bfseries IO\+\_\+\+PIN}~27
+\begin{DoxyCompactList}\small\item\em Pin para DAT (DS1302) \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_ac9bb6d868837c450a2172efa97326d4a}\label{main_8cpp_ac9bb6d868837c450a2172efa97326d4a} 
+\#define {\bfseries SCLK\+\_\+\+PIN}~14
+\begin{DoxyCompactList}\small\item\em Pin para CLK (DS1302) \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_abb388c9dfbdca89b280a12c4af1a030f}\label{main_8cpp_abb388c9dfbdca89b280a12c4af1a030f} 
+\#define {\bfseries CE\+\_\+\+PIN}~26
+\begin{DoxyCompactList}\small\item\em Pin para RST (DS1302) \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_a3b0a1d1d72b10a9c0c95adeb235d19f4}\label{main_8cpp_a3b0a1d1d72b10a9c0c95adeb235d19f4} 
+\#define {\bfseries IR\+\_\+\+PIN}~16
+\begin{DoxyCompactList}\small\item\em Pin para el sensor infrarrojo ARD SO. \end{DoxyCompactList}\item 
 \Hypertarget{main_8cpp_abfae246a91df54e807874aa8680beccb}\label{main_8cpp_abfae246a91df54e807874aa8680beccb} 
 \#define {\bfseries DHT\+\_\+\+TYPE}~DHT11
 \begin{DoxyCompactList}\small\item\em Tipo de sensor DHT usado. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Funciones}
 \begin{DoxyCompactItemize}
 \item 
+Three\+Wire \mbox{\hyperlink{main_8cpp_a3a2d78ec4f99a881eb86a76d48b0e9ac}{my\+Wire}} (\mbox{\hyperlink{main_8cpp_aea87b10d3230b9148564707d34b26756}{IO\+\_\+\+PIN}}, \mbox{\hyperlink{main_8cpp_ac9bb6d868837c450a2172efa97326d4a}{SCLK\+\_\+\+PIN}}, \mbox{\hyperlink{main_8cpp_abb388c9dfbdca89b280a12c4af1a030f}{CE\+\_\+\+PIN}})
+\begin{DoxyCompactList}\small\item\em Instancias de clases para el módulo RTC DS1302. \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_a0d05f885f9fe03bfd70dae7301aa0ff9}\label{main_8cpp_a0d05f885f9fe03bfd70dae7301aa0ff9} 
+Rtc\+DS1302$<$ Three\+Wire $>$ {\bfseries Rtc} (\mbox{\hyperlink{main_8cpp_a3a2d78ec4f99a881eb86a76d48b0e9ac}{my\+Wire}})
+\begin{DoxyCompactList}\small\item\em Instancia para la comunicación con el RTC DS1302. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_a005262b25f004c62216ddd297d40cdd0}{task\+Toggle\+LED}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
-\begin{DoxyCompactList}\small\item\em Tarea para alternar el estado del LED. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Alterna el estado del LED basado en condiciones ambientales. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a6c5f85b77d8f0af02c08cc0d286f96c6}{task\+Buzzer\+Alarm}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
+\begin{DoxyCompactList}\small\item\em Activa una alarma sonora mediante un buzzer si las condiciones exceden los límites. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_adaa850d83eaabafc9b772ece2d0072d9}{task\+Temperature}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
-\begin{DoxyCompactList}\small\item\em Tarea para leer la temperatura del sensor DHT. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Lee la temperatura desde el sensor DHT y actualiza los datos compartidos. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_a6446ed14690ebf69292ee2869f5d5763}{task\+Humidity}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
-\begin{DoxyCompactList}\small\item\em Tarea para leer la humedad del sensor DHT. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Lee la humedad desde el sensor DHT y actualiza los datos compartidos. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_a200fb493e26dd911039b2d50d5ecc13b}{task\+Light}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
-\begin{DoxyCompactList}\small\item\em Tarea para leer el nivel de luz del sensor LDR. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Lee el nivel de luz desde el sensor LDR y actualiza los datos compartidos. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_ad6eee1cf4dd53d9dbe8f7ae19a447f03}{task\+Clock\+Time}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
+\begin{DoxyCompactList}\small\item\em Lee la fecha y hora del módulo RTC DS1302. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_aa7420d7fc1aa5c6f5f6bd578bcb1fe19}{task\+Print\+Data}} (void \texorpdfstring{$\ast$}{*}pv\+Parameters)
-\begin{DoxyCompactList}\small\item\em Tarea para imprimir los datos de los sensores. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Imprime los datos de los sensores en el puerto serial. \end{DoxyCompactList}\item 
+Rtc\+Date\+Time \mbox{\hyperlink{main_8cpp_a431772f2ed25bad548539c6ae610f556}{get\+Compile\+Date\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Obtiene la fecha y hora de compilación para inicializar el RTC DS1302. \end{DoxyCompactList}\item 
 \Hypertarget{main_8cpp_a4fc01d736fe50cf5b977f755b675f11d}\label{main_8cpp_a4fc01d736fe50cf5b977f755b675f11d} 
 void {\bfseries setup} ()
-\begin{DoxyCompactList}\small\item\em Configuración inicial del sistema para usar Free\+RTOS. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Configuración inicial del sistema que incluye inicialización de sensores, actuadores y tareas de Free\+RTOS. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_afe461d27b9c48d5921c00d521181f12f}{loop}} ()
 \begin{DoxyCompactList}\small\item\em Bucle principal del programa. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -55,9 +83,9 @@ void \mbox{\hyperlink{main_8cpp_afe461d27b9c48d5921c00d521181f12f}{loop}} ()
 \doxysubsection{Descripción detallada}
 Sistema embebido para el monitoreo y control ambiental en un invernadero de cannabis medicinal. 
 
-Este programa gestiona un invernadero mediante sensores y actuadores que optimizan las condiciones de cultivo. Incluye captura de datos de temperatura, humedad relativa y luz ambiental, control de un LED RGB, y monitoreo remoto mediante puerto serie.
+Este programa utiliza RTOS para realizar el monitoreo y control ambiental dentro de un invernadero. Incluye lectura de sensores, control de actuadores, registro de datos, y soporte para alarmas visuales y sonoras.
 
-\begin{DoxyAuthor}{Autores}
+\begin{DoxyAuthor}{Autor}
 Valentina Muñoz Arcos Luis Miguel Gómez Muñoz David Alejandro Ortega Flórez
 \end{DoxyAuthor}
 \begin{DoxyVersion}{Versión}
@@ -69,6 +97,19 @@ Valentina Muñoz Arcos Luis Miguel Gómez Muñoz David Alejandro Ortega Flórez
 
 
 \doxysubsection{Documentación de funciones}
+\Hypertarget{main_8cpp_a431772f2ed25bad548539c6ae610f556}\index{main.cpp@{main.cpp}!getCompileDateTime@{getCompileDateTime}}
+\index{getCompileDateTime@{getCompileDateTime}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{getCompileDateTime()}{getCompileDateTime()}}
+{\footnotesize\ttfamily \label{main_8cpp_a431772f2ed25bad548539c6ae610f556} 
+Rtc\+Date\+Time get\+Compile\+Date\+Time (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Obtiene la fecha y hora de compilación para inicializar el RTC DS1302. 
+
+\begin{DoxyReturn}{Devuelve}
+Rtc\+Date\+Time La fecha y hora de compilación. 
+\end{DoxyReturn}
 \Hypertarget{main_8cpp_afe461d27b9c48d5921c00d521181f12f}\index{main.cpp@{main.cpp}!loop@{loop}}
 \index{loop@{loop}!main.cpp@{main.cpp}}
 \doxysubsubsection{\texorpdfstring{loop()}{loop()}}
@@ -79,7 +120,47 @@ void loop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 Bucle principal del programa. 
 
-Este bucle permanece vacío porque todas las operaciones son manejadas por las tareas de Free\+RTOS. \Hypertarget{main_8cpp_a6446ed14690ebf69292ee2869f5d5763}\index{main.cpp@{main.cpp}!taskHumidity@{taskHumidity}}
+Este bucle permanece vacío porque todas las operaciones son manejadas por las tareas de Free\+RTOS. \Hypertarget{main_8cpp_a3a2d78ec4f99a881eb86a76d48b0e9ac}\index{main.cpp@{main.cpp}!myWire@{myWire}}
+\index{myWire@{myWire}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{myWire()}{myWire()}}
+{\footnotesize\ttfamily \label{main_8cpp_a3a2d78ec4f99a881eb86a76d48b0e9ac} 
+Three\+Wire my\+Wire (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{main_8cpp_aea87b10d3230b9148564707d34b26756}{IO\+\_\+\+PIN}}}]{}{, }\item[{\mbox{\hyperlink{main_8cpp_ac9bb6d868837c450a2172efa97326d4a}{SCLK\+\_\+\+PIN}}}]{}{, }\item[{\mbox{\hyperlink{main_8cpp_abb388c9dfbdca89b280a12c4af1a030f}{CE\+\_\+\+PIN}}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Instancias de clases para el módulo RTC DS1302. 
+
+Configuración de pines del RTC DS1302 \Hypertarget{main_8cpp_a6c5f85b77d8f0af02c08cc0d286f96c6}\index{main.cpp@{main.cpp}!taskBuzzerAlarm@{taskBuzzerAlarm}}
+\index{taskBuzzerAlarm@{taskBuzzerAlarm}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{taskBuzzerAlarm()}{taskBuzzerAlarm()}}
+{\footnotesize\ttfamily \label{main_8cpp_a6c5f85b77d8f0af02c08cc0d286f96c6} 
+void task\+Buzzer\+Alarm (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Activa una alarma sonora mediante un buzzer si las condiciones exceden los límites. 
+
+
+\begin{DoxyParams}{Parámetros}
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos y mutex. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_ad6eee1cf4dd53d9dbe8f7ae19a447f03}\index{main.cpp@{main.cpp}!taskClockTime@{taskClockTime}}
+\index{taskClockTime@{taskClockTime}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{taskClockTime()}{taskClockTime()}}
+{\footnotesize\ttfamily \label{main_8cpp_ad6eee1cf4dd53d9dbe8f7ae19a447f03} 
+void task\+Clock\+Time (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Lee la fecha y hora del módulo RTC DS1302. 
+
+
+\begin{DoxyParams}{Parámetros}
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos y mutex. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_a6446ed14690ebf69292ee2869f5d5763}\index{main.cpp@{main.cpp}!taskHumidity@{taskHumidity}}
 \index{taskHumidity@{taskHumidity}!main.cpp@{main.cpp}}
 \doxysubsubsection{\texorpdfstring{taskHumidity()}{taskHumidity()}}
 {\footnotesize\ttfamily \label{main_8cpp_a6446ed14690ebf69292ee2869f5d5763} 
@@ -87,11 +168,11 @@ void task\+Humidity (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}
 
 
 
-Tarea para leer la humedad del sensor DHT. 
+Lee la humedad desde el sensor DHT y actualiza los datos compartidos. 
 
 
 \begin{DoxyParams}{Parámetros}
-{\em pv\+Parameters} & Parámetros de la tarea\+: datos compartidos, sensor y mutex. \\
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos, sensor y mutex. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{main_8cpp_a200fb493e26dd911039b2d50d5ecc13b}\index{main.cpp@{main.cpp}!taskLight@{taskLight}}
@@ -102,11 +183,11 @@ void task\+Light (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}
 
 
 
-Tarea para leer el nivel de luz del sensor LDR. 
+Lee el nivel de luz desde el sensor LDR y actualiza los datos compartidos. 
 
 
 \begin{DoxyParams}{Parámetros}
-{\em pv\+Parameters} & Puntero a los parámetros de la tarea. Incluye datos compartidos y mutex. \\
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos y mutex. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{main_8cpp_aa7420d7fc1aa5c6f5f6bd578bcb1fe19}\index{main.cpp@{main.cpp}!taskPrintData@{taskPrintData}}
@@ -117,11 +198,11 @@ void task\+Print\+Data (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\as
 
 
 
-Tarea para imprimir los datos de los sensores. 
+Imprime los datos de los sensores en el puerto serial. 
 
 
 \begin{DoxyParams}{Parámetros}
-{\em pv\+Parameters} & Parámetros de la tarea\+: datos compartidos y mutex. \\
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos y mutex. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{main_8cpp_adaa850d83eaabafc9b772ece2d0072d9}\index{main.cpp@{main.cpp}!taskTemperature@{taskTemperature}}
@@ -132,11 +213,11 @@ void task\+Temperature (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\as
 
 
 
-Tarea para leer la temperatura del sensor DHT. 
+Lee la temperatura desde el sensor DHT y actualiza los datos compartidos. 
 
 
 \begin{DoxyParams}{Parámetros}
-{\em pv\+Parameters} & Parámetros de la tarea\+: datos compartidos, sensor y mutex. \\
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos, sensor y mutex. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{main_8cpp_a005262b25f004c62216ddd297d40cdd0}\index{main.cpp@{main.cpp}!taskToggleLED@{taskToggleLED}}
@@ -147,10 +228,10 @@ void task\+Toggle\+LED (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\as
 
 
 
-Tarea para alternar el estado del LED. 
+Alterna el estado del LED basado en condiciones ambientales. 
 
 
 \begin{DoxyParams}{Parámetros}
-{\em pv\+Parameters} & Parámetros de la tarea\+: datos compartidos y mutex. \\
+{\em pv\+Parameters} & Puntero a los parámetros que incluye datos compartidos y mutex. \\
 \hline
 \end{DoxyParams}

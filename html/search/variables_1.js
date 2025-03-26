@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['light_0',['light',['../struct_sensor_data.html#a4b6371d2037ac55cbb9dfd3d91672209',1,'SensorData']]]
+  ['humidity_0',['humidity',['../struct_sensor_data.html#a5f4514dbd8e7db8f6afe7f3e926225da',1,'SensorData']]]
 ];

@@ -116,11 +116,13 @@ $(function(){initNavTree('main_8cpp.html',''); initResizable(true); });
 <code>#include &lt;freertos/semphr.h&gt;</code><br />
 <code>#include &lt;freertos/task.h&gt;</code><br />
 <code>#include &lt;DHT.h&gt;</code><br />
+<code>#include &lt;ThreeWire.h&gt;</code><br />
+<code>#include &lt;RtcDS1302.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Clases</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_sensor_data.html">SensorData</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estructura para almacenar datos de sensores.  <a href="struct_sensor_data.html#details">Más...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estructura para almacenar datos de los sensores ambientales.  <a href="struct_sensor_data.html#details">Más...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -129,6 +131,10 @@ defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>LED_PIN</b>&#160;&#160;&#160;5</td></tr>
 <tr class="memdesc:ab4553be4db9860d940f81d7447173b2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para el LED. <br /></td></tr>
 <tr class="separator:ab4553be4db9860d940f81d7447173b2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab61d0981ed42df9e18211b273d22cfcd" id="r_ab61d0981ed42df9e18211b273d22cfcd"><td class="memItemLeft" align="right" valign="top"><a id="ab61d0981ed42df9e18211b273d22cfcd" name="ab61d0981ed42df9e18211b273d22cfcd"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>BUZZER_PIN</b>&#160;&#160;&#160;25</td></tr>
+<tr class="memdesc:ab61d0981ed42df9e18211b273d22cfcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para el buzzer. <br /></td></tr>
+<tr class="separator:ab61d0981ed42df9e18211b273d22cfcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51fd859df7f54aaa2ef64c36c97b548a" id="r_a51fd859df7f54aaa2ef64c36c97b548a"><td class="memItemLeft" align="right" valign="top"><a id="a51fd859df7f54aaa2ef64c36c97b548a" name="a51fd859df7f54aaa2ef64c36c97b548a"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>LDR_PIN</b>&#160;&#160;&#160;2</td></tr>
 <tr class="memdesc:a51fd859df7f54aaa2ef64c36c97b548a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para el sensor LDR. <br /></td></tr>
@@ -141,6 +147,22 @@ defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>BTN_PIN</b>&#160;&#160;&#160;15</td></tr>
 <tr class="memdesc:a6d68c581d3bc6b5b42af0365209f4960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para el botón. <br /></td></tr>
 <tr class="separator:a6d68c581d3bc6b5b42af0365209f4960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea87b10d3230b9148564707d34b26756" id="r_aea87b10d3230b9148564707d34b26756"><td class="memItemLeft" align="right" valign="top"><a id="aea87b10d3230b9148564707d34b26756" name="aea87b10d3230b9148564707d34b26756"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>IO_PIN</b>&#160;&#160;&#160;27</td></tr>
+<tr class="memdesc:aea87b10d3230b9148564707d34b26756"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para DAT (DS1302) <br /></td></tr>
+<tr class="separator:aea87b10d3230b9148564707d34b26756"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9bb6d868837c450a2172efa97326d4a" id="r_ac9bb6d868837c450a2172efa97326d4a"><td class="memItemLeft" align="right" valign="top"><a id="ac9bb6d868837c450a2172efa97326d4a" name="ac9bb6d868837c450a2172efa97326d4a"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCLK_PIN</b>&#160;&#160;&#160;14</td></tr>
+<tr class="memdesc:ac9bb6d868837c450a2172efa97326d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para CLK (DS1302) <br /></td></tr>
+<tr class="separator:ac9bb6d868837c450a2172efa97326d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb388c9dfbdca89b280a12c4af1a030f" id="r_abb388c9dfbdca89b280a12c4af1a030f"><td class="memItemLeft" align="right" valign="top"><a id="abb388c9dfbdca89b280a12c4af1a030f" name="abb388c9dfbdca89b280a12c4af1a030f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>CE_PIN</b>&#160;&#160;&#160;26</td></tr>
+<tr class="memdesc:abb388c9dfbdca89b280a12c4af1a030f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para RST (DS1302) <br /></td></tr>
+<tr class="separator:abb388c9dfbdca89b280a12c4af1a030f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b0a1d1d72b10a9c0c95adeb235d19f4" id="r_a3b0a1d1d72b10a9c0c95adeb235d19f4"><td class="memItemLeft" align="right" valign="top"><a id="a3b0a1d1d72b10a9c0c95adeb235d19f4" name="a3b0a1d1d72b10a9c0c95adeb235d19f4"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>IR_PIN</b>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:a3b0a1d1d72b10a9c0c95adeb235d19f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin para el sensor infrarrojo ARD SO. <br /></td></tr>
+<tr class="separator:a3b0a1d1d72b10a9c0c95adeb235d19f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfae246a91df54e807874aa8680beccb" id="r_abfae246a91df54e807874aa8680beccb"><td class="memItemLeft" align="right" valign="top"><a id="abfae246a91df54e807874aa8680beccb" name="abfae246a91df54e807874aa8680beccb"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DHT_TYPE</b>&#160;&#160;&#160;DHT11</td></tr>
 <tr class="memdesc:abfae246a91df54e807874aa8680beccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tipo de sensor DHT usado. <br /></td></tr>
@@ -148,24 +170,40 @@ defines</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Funciones</h2></td></tr>
+<tr class="memitem:a3a2d78ec4f99a881eb86a76d48b0e9ac" id="r_a3a2d78ec4f99a881eb86a76d48b0e9ac"><td class="memItemLeft" align="right" valign="top">ThreeWire&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a2d78ec4f99a881eb86a76d48b0e9ac">myWire</a> (<a class="el" href="#aea87b10d3230b9148564707d34b26756">IO_PIN</a>, <a class="el" href="#ac9bb6d868837c450a2172efa97326d4a">SCLK_PIN</a>, <a class="el" href="#abb388c9dfbdca89b280a12c4af1a030f">CE_PIN</a>)</td></tr>
+<tr class="memdesc:a3a2d78ec4f99a881eb86a76d48b0e9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instancias de clases para el módulo RTC DS1302.  <br /></td></tr>
+<tr class="separator:a3a2d78ec4f99a881eb86a76d48b0e9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d05f885f9fe03bfd70dae7301aa0ff9" id="r_a0d05f885f9fe03bfd70dae7301aa0ff9"><td class="memItemLeft" align="right" valign="top"><a id="a0d05f885f9fe03bfd70dae7301aa0ff9" name="a0d05f885f9fe03bfd70dae7301aa0ff9"></a>
+RtcDS1302&lt; ThreeWire &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Rtc</b> (<a class="el" href="#a3a2d78ec4f99a881eb86a76d48b0e9ac">myWire</a>)</td></tr>
+<tr class="memdesc:a0d05f885f9fe03bfd70dae7301aa0ff9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instancia para la comunicación con el RTC DS1302. <br /></td></tr>
+<tr class="separator:a0d05f885f9fe03bfd70dae7301aa0ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a005262b25f004c62216ddd297d40cdd0" id="r_a005262b25f004c62216ddd297d40cdd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a005262b25f004c62216ddd297d40cdd0">taskToggleLED</a> (void *pvParameters)</td></tr>
-<tr class="memdesc:a005262b25f004c62216ddd297d40cdd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tarea para alternar el estado del LED.  <br /></td></tr>
+<tr class="memdesc:a005262b25f004c62216ddd297d40cdd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alterna el estado del LED basado en condiciones ambientales.  <br /></td></tr>
 <tr class="separator:a005262b25f004c62216ddd297d40cdd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c5f85b77d8f0af02c08cc0d286f96c6" id="r_a6c5f85b77d8f0af02c08cc0d286f96c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c5f85b77d8f0af02c08cc0d286f96c6">taskBuzzerAlarm</a> (void *pvParameters)</td></tr>
+<tr class="memdesc:a6c5f85b77d8f0af02c08cc0d286f96c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activa una alarma sonora mediante un buzzer si las condiciones exceden los límites.  <br /></td></tr>
+<tr class="separator:a6c5f85b77d8f0af02c08cc0d286f96c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adaa850d83eaabafc9b772ece2d0072d9" id="r_adaa850d83eaabafc9b772ece2d0072d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adaa850d83eaabafc9b772ece2d0072d9">taskTemperature</a> (void *pvParameters)</td></tr>
-<tr class="memdesc:adaa850d83eaabafc9b772ece2d0072d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tarea para leer la temperatura del sensor DHT.  <br /></td></tr>
+<tr class="memdesc:adaa850d83eaabafc9b772ece2d0072d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee la temperatura desde el sensor DHT y actualiza los datos compartidos.  <br /></td></tr>
 <tr class="separator:adaa850d83eaabafc9b772ece2d0072d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6446ed14690ebf69292ee2869f5d5763" id="r_a6446ed14690ebf69292ee2869f5d5763"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6446ed14690ebf69292ee2869f5d5763">taskHumidity</a> (void *pvParameters)</td></tr>
-<tr class="memdesc:a6446ed14690ebf69292ee2869f5d5763"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tarea para leer la humedad del sensor DHT.  <br /></td></tr>
+<tr class="memdesc:a6446ed14690ebf69292ee2869f5d5763"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee la humedad desde el sensor DHT y actualiza los datos compartidos.  <br /></td></tr>
 <tr class="separator:a6446ed14690ebf69292ee2869f5d5763"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a200fb493e26dd911039b2d50d5ecc13b" id="r_a200fb493e26dd911039b2d50d5ecc13b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a200fb493e26dd911039b2d50d5ecc13b">taskLight</a> (void *pvParameters)</td></tr>
-<tr class="memdesc:a200fb493e26dd911039b2d50d5ecc13b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tarea para leer el nivel de luz del sensor LDR.  <br /></td></tr>
+<tr class="memdesc:a200fb493e26dd911039b2d50d5ecc13b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el nivel de luz desde el sensor LDR y actualiza los datos compartidos.  <br /></td></tr>
 <tr class="separator:a200fb493e26dd911039b2d50d5ecc13b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6eee1cf4dd53d9dbe8f7ae19a447f03" id="r_ad6eee1cf4dd53d9dbe8f7ae19a447f03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6eee1cf4dd53d9dbe8f7ae19a447f03">taskClockTime</a> (void *pvParameters)</td></tr>
+<tr class="memdesc:ad6eee1cf4dd53d9dbe8f7ae19a447f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee la fecha y hora del módulo RTC DS1302.  <br /></td></tr>
+<tr class="separator:ad6eee1cf4dd53d9dbe8f7ae19a447f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7420d7fc1aa5c6f5f6bd578bcb1fe19" id="r_aa7420d7fc1aa5c6f5f6bd578bcb1fe19"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7420d7fc1aa5c6f5f6bd578bcb1fe19">taskPrintData</a> (void *pvParameters)</td></tr>
-<tr class="memdesc:aa7420d7fc1aa5c6f5f6bd578bcb1fe19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tarea para imprimir los datos de los sensores.  <br /></td></tr>
+<tr class="memdesc:aa7420d7fc1aa5c6f5f6bd578bcb1fe19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Imprime los datos de los sensores en el puerto serial.  <br /></td></tr>
 <tr class="separator:aa7420d7fc1aa5c6f5f6bd578bcb1fe19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a431772f2ed25bad548539c6ae610f556" id="r_a431772f2ed25bad548539c6ae610f556"><td class="memItemLeft" align="right" valign="top">RtcDateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a431772f2ed25bad548539c6ae610f556">getCompileDateTime</a> ()</td></tr>
+<tr class="memdesc:a431772f2ed25bad548539c6ae610f556"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtiene la fecha y hora de compilación para inicializar el RTC DS1302.  <br /></td></tr>
+<tr class="separator:a431772f2ed25bad548539c6ae610f556"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d" id="r_a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top"><a id="a4fc01d736fe50cf5b977f755b675f11d" name="a4fc01d736fe50cf5b977f755b675f11d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
-<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuración inicial del sistema para usar FreeRTOS. <br /></td></tr>
+<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuración inicial del sistema que incluye inicialización de sensores, actuadores y tareas de FreeRTOS. <br /></td></tr>
 <tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe461d27b9c48d5921c00d521181f12f" id="r_afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
 <tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bucle principal del programa.  <br /></td></tr>
@@ -173,11 +211,31 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Descripción detallada</h2>
 <div class="textblock"><p>Sistema embebido para el monitoreo y control ambiental en un invernadero de cannabis medicinal. </p>
-<p>Este programa gestiona un invernadero mediante sensores y actuadores que optimizan las condiciones de cultivo. Incluye captura de datos de temperatura, humedad relativa y luz ambiental, control de un LED RGB, y monitoreo remoto mediante puerto serie.</p>
-<dl class="section author"><dt>Autores</dt><dd>Valentina Muñoz Arcos Luis Miguel Gómez Muñoz David Alejandro Ortega Flórez</dd></dl>
+<p>Este programa utiliza RTOS para realizar el monitoreo y control ambiental dentro de un invernadero. Incluye lectura de sensores, control de actuadores, registro de datos, y soporte para alarmas visuales y sonoras.</p>
+<dl class="section author"><dt>Autor</dt><dd>Valentina Muñoz Arcos Luis Miguel Gómez Muñoz David Alejandro Ortega Flórez</dd></dl>
 <dl class="section version"><dt>Versión</dt><dd>1.2 </dd></dl>
 <dl class="section date"><dt>Fecha</dt><dd>2025-03-26 </dd></dl>
 </div><h2 class="groupheader">Documentación de funciones</h2>
+<a id="a431772f2ed25bad548539c6ae610f556" name="a431772f2ed25bad548539c6ae610f556"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a431772f2ed25bad548539c6ae610f556">&#9670;&#160;</a></span>getCompileDateTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RtcDateTime getCompileDateTime </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Obtiene la fecha y hora de compilación para inicializar el RTC DS1302. </p>
+<dl class="section return"><dt>Devuelve</dt><dd>RtcDateTime La fecha y hora de compilación. </dd></dl>
+
+</div>
+</div>
 <a id="afe461d27b9c48d5921c00d521181f12f" name="afe461d27b9c48d5921c00d521181f12f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe461d27b9c48d5921c00d521181f12f">&#9670;&#160;</a></span>loop()</h2>
 
@@ -198,6 +256,85 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
 
 </div>
 </div>
+<a id="a3a2d78ec4f99a881eb86a76d48b0e9ac" name="a3a2d78ec4f99a881eb86a76d48b0e9ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a2d78ec4f99a881eb86a76d48b0e9ac">&#9670;&#160;</a></span>myWire()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ThreeWire myWire </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aea87b10d3230b9148564707d34b26756">IO_PIN</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ac9bb6d868837c450a2172efa97326d4a">SCLK_PIN</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#abb388c9dfbdca89b280a12c4af1a030f">CE_PIN</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Instancias de clases para el módulo RTC DS1302. </p>
+<p>Configuración de pines del RTC DS1302 </p>
+
+</div>
+</div>
+<a id="a6c5f85b77d8f0af02c08cc0d286f96c6" name="a6c5f85b77d8f0af02c08cc0d286f96c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c5f85b77d8f0af02c08cc0d286f96c6">&#9670;&#160;</a></span>taskBuzzerAlarm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void taskBuzzerAlarm </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>pvParameters</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Activa una alarma sonora mediante un buzzer si las condiciones exceden los límites. </p>
+<dl class="params"><dt>Parámetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos y mutex. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad6eee1cf4dd53d9dbe8f7ae19a447f03" name="ad6eee1cf4dd53d9dbe8f7ae19a447f03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6eee1cf4dd53d9dbe8f7ae19a447f03">&#9670;&#160;</a></span>taskClockTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void taskClockTime </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>pvParameters</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee la fecha y hora del módulo RTC DS1302. </p>
+<dl class="params"><dt>Parámetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos y mutex. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a6446ed14690ebf69292ee2869f5d5763" name="a6446ed14690ebf69292ee2869f5d5763"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6446ed14690ebf69292ee2869f5d5763">&#9670;&#160;</a></span>taskHumidity()</h2>
 
@@ -213,10 +350,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Tarea para leer la humedad del sensor DHT. </p>
+<p>Lee la humedad desde el sensor DHT y actualiza los datos compartidos. </p>
 <dl class="params"><dt>Parámetros</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvParameters</td><td>Parámetros de la tarea: datos compartidos, sensor y mutex. </td></tr>
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos, sensor y mutex. </td></tr>
   </table>
   </dd>
 </dl>
@@ -238,10 +375,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Tarea para leer el nivel de luz del sensor LDR. </p>
+<p>Lee el nivel de luz desde el sensor LDR y actualiza los datos compartidos. </p>
 <dl class="params"><dt>Parámetros</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros de la tarea. Incluye datos compartidos y mutex. </td></tr>
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos y mutex. </td></tr>
   </table>
   </dd>
 </dl>
@@ -263,10 +400,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Tarea para imprimir los datos de los sensores. </p>
+<p>Imprime los datos de los sensores en el puerto serial. </p>
 <dl class="params"><dt>Parámetros</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvParameters</td><td>Parámetros de la tarea: datos compartidos y mutex. </td></tr>
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos y mutex. </td></tr>
   </table>
   </dd>
 </dl>
@@ -288,10 +425,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Tarea para leer la temperatura del sensor DHT. </p>
+<p>Lee la temperatura desde el sensor DHT y actualiza los datos compartidos. </p>
 <dl class="params"><dt>Parámetros</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvParameters</td><td>Parámetros de la tarea: datos compartidos, sensor y mutex. </td></tr>
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos, sensor y mutex. </td></tr>
   </table>
   </dd>
 </dl>
@@ -313,10 +450,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Tarea para alternar el estado del LED. </p>
+<p>Alterna el estado del LED basado en condiciones ambientales. </p>
 <dl class="params"><dt>Parámetros</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvParameters</td><td>Parámetros de la tarea: datos compartidos y mutex. </td></tr>
+    <tr><td class="paramname">pvParameters</td><td>Puntero a los parámetros que incluye datos compartidos y mutex. </td></tr>
   </table>
   </dd>
 </dl>
